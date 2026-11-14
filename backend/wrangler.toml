@@ -1,0 +1,34 @@
+name = "ilovesmash-api"
+main = "src/worker.js"
+compatibility_date = "2025-01-15"
+
+# The dashboard page is bundled as text
+rules = [ { type = "Text", globs = ["**/*.html"], fallthrough = true } ]
+
+[vars]
+# Address of the website (GitHub Pages or own domain). Customers return here after paying.
+SITE_URL = "https://omar12354.github.io/ilovesmash/"
+# Which website may call the API. Same origin as SITE_URL, without the path.
+ALLOWED_ORIGIN = "https://omar12354.github.io"
+# "mock" = test mode with a fake payment page. Change to "live" once the SumUp key is set.
+SUMUP_MODE = "mock"
+# Days after which names, phone numbers and e-mail addresses are removed (privacy / AVG).
+RETENTION_DAYS = "30"
+# Sender for confirmation e-mails (only used when RESEND_API_KEY is set), e.g. "I Love Smash Burger <bestellen@ilovesmashburger.nl>"
+MAIL_FROM = ""
+
+# Secrets – NOT in this file. Set them with:
+#   npx wrangler secret put DASHBOARD_PIN
+#   npx wrangler secret put SESSION_SECRET
+#   npx wrangler secret put SUMUP_API_KEY
+#   npx wrangler secret put SUMUP_MERCHANT_CODE
+#   npx wrangler secret put RESEND_API_KEY      (optional, for e-mails)
+
+[[d1_databases]]
+binding = "DB"
+database_name = "ilovesmash"
+database_id = "REPLACE_WITH_YOUR_DATABASE_ID"
+
+# Daily privacy clean-up at 04:00 UTC
+[triggers]
+crons = ["0 4 * * *"]

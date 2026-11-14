@@ -1,0 +1,16 @@
+{
+  "name": "ilovesmash-api",
+  "version": "1.0.0",
+  "description": "Bestel-backend voor I Love Smash Burger (Cloudflare Worker + D1)",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "db:init": "wrangler d1 execute ilovesmash --remote --file=schema.sql",
+    "db:init:local": "wrangler d1 execute ilovesmash --local --file=schema.sql",
+    "logs": "wrangler tail"
+  },
+  "devDependencies": {
+    "wrangler": "^3.114.9"
+  },
+  "private": true
+}

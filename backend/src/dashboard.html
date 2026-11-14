@@ -1,0 +1,344 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0A0E1A">
+<meta name="robots" content="noindex, nofollow">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Bestellingen">
+<title>Bestellingen · I Love Smash Burger</title>
+<style>
+:root{--ink:#0A0E1A;--navy:#121A31;--navy2:#1A2545;--navy3:#24315A;--red:#E3262F;--redd:#A3141D;--sky:#8FBCEB;--blue:#2F7BF0;--cheese:#F7B500;--ok:#22c55e;--muted:#A9B4CE;--white:#fff}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--ink);color:#fff;font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;min-height:100vh;-webkit-tap-highlight-color:transparent}
+button,input,select,a{font:inherit;color:inherit}
+button{cursor:pointer;touch-action:manipulation}
+.hidden{display:none!important}
+/* login */
+.login{min-height:100vh;display:grid;place-items:center;padding:20px}
+.login form{width:min(380px,100%);background:var(--navy);border:1px solid rgba(255,255,255,.08);border-radius:22px;padding:30px;text-align:center}
+.brand{font-weight:900;font-size:26px;letter-spacing:.02em;text-transform:uppercase;line-height:1}
+.brand span{color:var(--red)}
+.login p{color:var(--muted);margin:10px 0 22px}
+.pin{width:100%;font-size:30px;letter-spacing:.4em;text-align:center;padding:14px;border-radius:14px;border:2px solid rgba(255,255,255,.15);background:var(--ink);outline:none}
+.pin:focus{border-color:var(--sky)}
+.err{color:#ff6b70;min-height:22px;margin-top:10px;font-weight:700;font-size:14px}
+.big{width:100%;margin-top:12px;padding:16px;border:0;border-radius:14px;background:var(--red);font-weight:900;font-size:18px;text-transform:uppercase;letter-spacing:.04em;box-shadow:0 5px 0 var(--redd)}
+.big:active{transform:translateY(3px);box-shadow:0 2px 0 var(--redd)}
+/* top bar */
+header{position:sticky;top:0;z-index:5;background:rgba(10,14,26,.94);backdrop-filter:blur(8px);border-bottom:1px solid rgba(255,255,255,.08);padding:12px 16px calc(12px) ;display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center}
+header .brand{font-size:19px;margin-right:auto}
+.pill{display:inline-flex;align-items:center;gap:8px;border-radius:99px;padding:9px 14px;border:2px solid rgba(255,255,255,.15);background:transparent;font-weight:800;font-size:14px;white-space:nowrap}
+.pill.test{border-color:var(--cheese);color:var(--cheese)}
+.pill.live{border-color:var(--ok);color:var(--ok)}
+.switch.on{background:var(--ok);border-color:var(--ok);color:var(--ink)}
+.switch.off{background:var(--red);border-color:var(--red);color:#fff}
+.dot{width:9px;height:9px;border-radius:50%;background:currentColor}
+.stats{display:flex;gap:10px;flex-wrap:wrap;padding:14px 16px 0}
+.stat{background:var(--navy);border-radius:14px;padding:10px 14px;min-width:120px}
+.stat b{display:block;font-size:22px}
+.stat span{color:var(--muted);font-size:13px;font-weight:600}
+.daybar{display:flex;align-items:center;gap:8px}
+.daybar input{background:var(--navy2);border:2px solid rgba(255,255,255,.12);border-radius:10px;padding:7px 10px;color-scheme:dark}
+/* board */
+.tabs{display:none;gap:6px;padding:12px 16px 0;overflow-x:auto}
+.tabs button{flex:none;border:2px solid rgba(255,255,255,.15);background:transparent;border-radius:99px;padding:9px 14px;font-weight:800}
+.tabs button.on{background:var(--sky);border-color:var(--sky);color:var(--ink)}
+.board{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;padding:14px 16px 40px;align-items:start}
+.col{background:var(--navy);border-radius:18px;padding:12px;min-height:200px}
+.col h2{font-size:14px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);display:flex;justify-content:space-between;align-items:center;margin:2px 4px 12px}
+.col h2 b{background:var(--navy3);color:#fff;border-radius:99px;min-width:28px;height:28px;display:grid;place-items:center;font-size:14px;padding:0 8px}
+.col.new h2 b{background:var(--red)}
+.empty{color:var(--muted);font-size:14px;text-align:center;padding:26px 8px}
+.card{background:#fff;color:var(--ink);border-radius:16px;padding:14px;margin-bottom:12px;border:3px solid transparent}
+.card.fresh{border-color:var(--red);animation:pulse 1.2s ease-in-out 4}
+@keyframes pulse{50%{box-shadow:0 0 0 8px rgba(227,38,47,.35)}}
+.card.waiting{opacity:.55;background:#e9edf5}
+.c-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+.num{font-weight:900;font-size:30px;line-height:1}
+.time{text-align:right;font-weight:900;font-size:20px;line-height:1.1}
+.time small{display:block;font-size:12px;font-weight:700;color:#5a6178}
+.time.late{color:var(--red)}
+.who{margin:8px 0 6px;font-weight:700;font-size:15px}
+.who a{color:var(--blue);text-decoration:none;font-weight:700;margin-left:6px}
+.pay{display:inline-block;font-size:12px;font-weight:900;text-transform:uppercase;letter-spacing:.04em;border-radius:6px;padding:4px 8px;margin-bottom:8px}
+.pay.paid{background:#dcfce7;color:#166534}
+.pay.due{background:#fef3c7;color:#92400e}
+.pay.wait{background:#e5e7eb;color:#374151}
+ul.items{list-style:none;border-top:1px dashed #c9cfdb;padding-top:8px}
+ul.items li{padding:5px 0;font-size:16px;font-weight:700;border-bottom:1px dashed #e3e7ef}
+ul.items li:last-child{border-bottom:0}
+.q{display:inline-block;min-width:30px}
+.sub{display:block;font-size:13px;font-weight:600;color:#4a5265;padding-left:30px}
+.wo{display:block;font-size:13px;font-weight:900;color:var(--red);padding-left:30px;text-transform:uppercase}
+.note{background:#fff7d6;border-radius:8px;padding:7px 9px;font-size:14px;font-weight:700;margin-top:8px}
+.tot{display:flex;justify-content:space-between;font-weight:900;margin-top:8px;font-size:15px}
+.acts{display:flex;gap:8px;margin-top:12px}
+.acts button{flex:1;border:0;border-radius:12px;padding:14px 10px;font-weight:900;font-size:15px;text-transform:uppercase;letter-spacing:.03em}
+.b-go{background:var(--red);color:#fff;box-shadow:0 4px 0 var(--redd)}
+.b-ok{background:var(--ok);color:var(--ink);box-shadow:0 4px 0 #15803d}
+.b-blue{background:var(--blue);color:#fff;box-shadow:0 4px 0 #1d4fae}
+.b-ghost{background:#eef1f6;color:var(--ink);flex:0 0 auto!important}
+.b-ghost.arm{background:var(--red);color:#fff}
+.acts button:active{transform:translateY(2px)}
+.done-list .card{padding:10px 12px}
+.done-list .num{font-size:20px}
+.toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:#fff;color:var(--ink);font-weight:800;padding:12px 18px;border-radius:99px;box-shadow:0 10px 30px rgba(0,0,0,.4);z-index:20}
+.sound-hint{background:var(--cheese);color:var(--ink);font-weight:800;text-align:center;padding:10px;cursor:pointer}
+@media (max-width:1100px){.board{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:700px){
+  .tabs{display:flex}
+  .board{grid-template-columns:1fr}
+  .col{display:none}.col.show{display:block}
+  .col h2{display:none}
+  header .brand{font-size:16px;width:100%}
+}
+/* receipt printing */
+#ticket{display:none}
+@media print{
+  body *{visibility:hidden}
+  #ticket,#ticket *{visibility:visible}
+  #ticket{display:block;position:absolute;left:0;top:0;width:72mm;color:#000;background:#fff;font-family:monospace;font-size:13px;padding:2mm}
+  #ticket h1{font-size:28px;text-align:center}
+  #ticket .c{text-align:center}
+  #ticket hr{border:0;border-top:1px dashed #000;margin:6px 0}
+  #ticket .wo{color:#000;padding-left:14px}
+  #ticket .sub{color:#000;padding-left:14px}
+  @page{margin:0;size:80mm auto}
+}
+</style>
+</head>
+<body>
+<!-- LOGIN -->
+<div class="login" id="loginView">
+  <form id="loginForm" autocomplete="off">
+    <div class="brand">I <span>♥</span> Smash Burger</div>
+    <p>Bestellingen – log in met de pincode</p>
+    <label for="pin" class="hidden">Pincode</label>
+    <input class="pin" id="pin" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="12" required autofocus>
+    <div class="err" id="loginErr" role="alert"></div>
+    <button class="big" type="submit">Inloggen</button>
+  </form>
+</div>
+
+<!-- APP -->
+<div id="appView" class="hidden">
+  <div class="sound-hint hidden" id="soundHint">Tik hier om het geluid voor nieuwe bestellingen aan te zetten</div>
+  <header>
+    <div class="brand">I <span>♥</span> Smash · Bestellingen</div>
+    <span class="pill" id="modePill"></span>
+    <button class="pill switch" id="pauseBtn" type="button"></button>
+    <div class="daybar"><label for="day" class="hidden">Dag</label><input type="date" id="day"></div>
+    <a class="pill" id="exportBtn" href="#">Export (maand)</a>
+    <button class="pill" id="logoutBtn" type="button">Uitloggen</button>
+  </header>
+  <div class="stats" id="stats"></div>
+  <nav class="tabs" id="tabs">
+    <button type="button" data-col="new" class="on">Nieuw</button>
+    <button type="button" data-col="accepted">In de keuken</button>
+    <button type="button" data-col="ready">Klaar</button>
+    <button type="button" data-col="done">Afgerond</button>
+  </nav>
+  <main class="board">
+    <section class="col new show" data-col="new"><h2>Nieuw <b id="n-new">0</b></h2><div id="c-new"></div></section>
+    <section class="col" data-col="accepted"><h2>In de keuken <b id="n-accepted">0</b></h2><div id="c-accepted"></div></section>
+    <section class="col" data-col="ready"><h2>Klaar om op te halen <b id="n-ready">0</b></h2><div id="c-ready"></div></section>
+    <section class="col done-list" data-col="done"><h2>Afgerond <b id="n-done">0</b></h2><div id="c-done"></div></section>
+  </main>
+</div>
+<div id="ticket"></div>
+
+<script>
+(function(){
+  const $ = s => document.querySelector(s);
+  const euro = c => "€ " + (c/100).toFixed(2).replace(".", ",");
+  const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
+  const todayAms = () => new Intl.DateTimeFormat("en-CA", { timeZone: "Europe/Amsterdam" }).format(new Date());
+  let state = { day: todayAms(), orders: [], paused: false, known: null, timer: null, armed: null, soundOn: false };
+  let audioCtx = null;
+
+  function toast(msg){ const t = el("div","toast",msg); document.body.appendChild(t); setTimeout(()=>t.remove(), 2200); }
+  function beep(){
+    if (!audioCtx) return;
+    const now = audioCtx.currentTime;
+    [0, .22, .44].forEach((d, i) => {
+      const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+      o.type = "square"; o.frequency.value = i === 2 ? 1320 : 880;
+      g.gain.setValueAtTime(.0001, now + d); g.gain.exponentialRampToValueAtTime(.25, now + d + .02); g.gain.exponentialRampToValueAtTime(.0001, now + d + .18);
+      o.connect(g).connect(audioCtx.destination); o.start(now + d); o.stop(now + d + .2);
+    });
+  }
+  function enableSound(){
+    try { audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)(); audioCtx.resume(); state.soundOn = true; $("#soundHint").classList.add("hidden"); } catch(e) {}
+  }
+  $("#soundHint").addEventListener("click", () => { enableSound(); beep(); });
+
+  async function api(path, opts = {}){
+    const r = await fetch(path, { credentials: "same-origin", headers: { "content-type": "application/json" }, ...opts });
+    if (r.status === 401 && !path.endsWith("/login")) { showLogin(); throw new Error("unauthorized"); }
+    return r;
+  }
+  function showLogin(){ clearInterval(state.timer); $("#appView").classList.add("hidden"); $("#loginView").classList.remove("hidden"); $("#pin").value = ""; $("#pin").focus(); }
+  function showApp(){ $("#loginView").classList.add("hidden"); $("#appView").classList.remove("hidden"); if (!state.soundOn) $("#soundHint").classList.remove("hidden"); load(true); clearInterval(state.timer); state.timer = setInterval(load, 8000); }
+
+  $("#loginForm").addEventListener("submit", async e => {
+    e.preventDefault(); enableSound();
+    const r = await api("/api/admin/login", { method: "POST", body: JSON.stringify({ pin: $("#pin").value }) });
+    if (r.ok) { $("#loginErr").textContent = ""; showApp(); }
+    else { const d = await r.json().catch(()=>({})); $("#loginErr").textContent = d.error === "locked" ? "Te vaak fout. Probeer het over 10 minuten opnieuw." : "Onjuiste pincode"; }
+  });
+  $("#logoutBtn").addEventListener("click", async () => { await api("/api/admin/logout", { method: "POST" }); state.known = null; showLogin(); });
+  $("#day").addEventListener("change", e => { state.day = e.target.value || todayAms(); state.known = null; load(true); });
+  $("#pauseBtn").addEventListener("click", async () => {
+    const r = await api("/api/admin/settings", { method: "POST", body: JSON.stringify({ paused: !state.paused }) });
+    const d = await r.json(); state.paused = d.paused; renderTop(); toast(d.paused ? "Online bestellen gepauzeerd" : "Online bestellen staat weer aan");
+  });
+  document.querySelectorAll("#tabs button").forEach(b => b.addEventListener("click", () => {
+    document.querySelectorAll("#tabs button").forEach(x => x.classList.toggle("on", x === b));
+    document.querySelectorAll(".col").forEach(c => c.classList.toggle("show", c.dataset.col === b.dataset.col));
+  }));
+
+  async function load(first){
+    try {
+      const r = await api("/api/admin/orders?day=" + state.day);
+      if (!r.ok) return;
+      const d = await r.json();
+      state.paused = d.paused; state.mode = d.mode;
+      const ids = new Set(d.orders.filter(o => o.status === "new").map(o => o.id));
+      let fresh = [];
+      if (state.known) fresh = [...ids].filter(id => !state.known.has(id));
+      state.known = new Set([...(state.known || []), ...ids]);
+      state.orders = d.orders; state.fresh = new Set(fresh);
+      if (fresh.length && state.day === todayAms()) { beep(); document.title = "(" + fresh.length + ") Nieuwe bestelling!"; setTimeout(() => document.title = "Bestellingen · I Love Smash Burger", 15000); }
+      render();
+    } catch(e) {}
+  }
+  function renderTop(){
+    const m = $("#modePill"); m.className = "pill " + (state.mode === "live" ? "live" : "test"); m.textContent = state.mode === "live" ? "● Live betalingen" : "● Testmodus";
+    const p = $("#pauseBtn"); p.className = "pill switch " + (state.paused ? "off" : "on");
+    p.textContent = state.paused ? "Online bestellen: GEPAUZEERD" : "Online bestellen: AAN";
+    $("#day").value = state.day;
+    const month = state.day.slice(0, 8) + "01";
+    $("#exportBtn").href = "/api/admin/export.csv?from=" + month + "&to=" + state.day;
+  }
+  function pickupLabel(o){
+    const t = o.pickup_at.slice(11);
+    return { t, small: o.asap ? "Zo snel mogelijk" : "Afhalen om" };
+  }
+  function isLate(o){
+    if (state.day !== todayAms() || !["new","accepted"].includes(o.status)) return false;
+    const [h, m] = o.pickup_at.slice(11).split(":").map(Number);
+    const now = new Date(new Date().toLocaleString("en-US", { timeZone: "Europe/Amsterdam" }));
+    return now.getHours() * 60 + now.getMinutes() > h * 60 + m;
+  }
+  function card(o, compact){
+    const c = el("article", "card" + (state.fresh && state.fresh.has(o.id) ? " fresh" : "") + (o.status === "pending_payment" ? " waiting" : ""));
+    const top = el("div", "c-top");
+    top.appendChild(el("div", "num", "#" + o.number));
+    const pl = pickupLabel(o);
+    const tm = el("div", "time" + (isLate(o) ? " late" : "")); tm.appendChild(el("small", null, pl.small)); tm.appendChild(document.createTextNode(pl.t));
+    top.appendChild(tm); c.appendChild(top);
+    const who = el("div", "who", o.name || "—");
+    if (o.phone) { const a = el("a", null, o.phone); a.href = "tel:" + o.phone; who.appendChild(a); }
+    c.appendChild(who);
+    let payTxt, payCls;
+    if (o.status === "pending_payment") { payTxt = "Wacht op betaling"; payCls = "wait"; }
+    else if (o.paid) { payTxt = o.pay_method === "online" ? "Online betaald ✓" : "Betaald ✓"; payCls = "paid"; }
+    else { payTxt = "Betalen bij afhalen · " + euro(o.total_cents); payCls = "due"; }
+    c.appendChild(el("span", "pay " + payCls, payTxt));
+    if (!compact) {
+      const ul = el("ul", "items");
+      o.items.forEach(l => {
+        const li = el("li"); li.appendChild(el("span", "q", l.qty + "×")); li.appendChild(document.createTextNode(l.name + (l.flavor ? " – " + l.flavor : "")));
+        if (l.menu) li.appendChild(el("span", "sub", "COMBO: friet + " + l.sauce));
+        else if (l.sauce) li.appendChild(el("span", "sub", "Saus: " + l.sauce));
+        (l.extraSauces || []).forEach(x => li.appendChild(el("span", "sub", "+ " + x)));
+        (l.extras || []).forEach(x => li.appendChild(el("span", "sub", "+ " + x)));
+        (l.without || []).forEach(w => li.appendChild(el("span", "wo", w)));
+        if (l.note) li.appendChild(el("span", "sub", "“" + l.note + "”"));
+        ul.appendChild(li);
+      });
+      c.appendChild(ul);
+      if (o.note) c.appendChild(el("div", "note", "Opmerking: " + o.note));
+      const tot = el("div", "tot"); tot.appendChild(el("span", null, "Totaal")); tot.appendChild(el("span", null, euro(o.total_cents))); c.appendChild(tot);
+    } else {
+      c.appendChild(el("div", "sub", o.items.map(l => l.qty + "× " + l.name).join(", ") + " · " + euro(o.total_cents) + (o.status === "cancelled" ? " · GEANNULEERD" : "")));
+    }
+    const acts = el("div", "acts");
+    const btn = (label, cls, fn) => { const b = el("button", cls, label); b.type = "button"; b.addEventListener("click", fn); acts.appendChild(b); return b; };
+    if (o.status === "new") { btn("Accepteren", "b-go", () => setStatus(o, "accepted")); cancelBtn(o, btn); }
+    if (o.status === "accepted") { btn("Klaar", "b-ok", () => setStatus(o, "ready")); cancelBtn(o, btn); }
+    if (o.status === "ready") btn(o.paid ? "Opgehaald" : "Betaald + opgehaald", "b-blue", () => setStatus(o, "picked_up"));
+    if (["new","accepted","ready"].includes(o.status)) btn("Bon", "b-ghost", () => printTicket(o));
+    if (acts.children.length) c.appendChild(acts);
+    return c;
+  }
+  function cancelBtn(o, btn){
+    const b = btn("✕", "b-ghost", () => {
+      if (state.armed === o.id) { state.armed = null; setStatus(o, "cancelled"); }
+      else { state.armed = o.id; b.classList.add("arm"); b.textContent = "Zeker?"; setTimeout(() => { if (state.armed === o.id) { state.armed = null; b.classList.remove("arm"); b.textContent = "✕"; } }, 3000); }
+    });
+    b.setAttribute("aria-label", "Annuleren");
+  }
+  async function setStatus(o, status){
+    const r = await api("/api/admin/orders/" + o.id + "/status", { method: "POST", body: JSON.stringify({ status }) });
+    if (!r.ok) { toast("Dat lukte niet"); return; }
+    state.fresh.delete(o.id); o.status = status; if (status === "picked_up" && o.pay_method === "at_pickup") o.paid = true;
+    render(); load();
+  }
+  function render(){
+    renderTop();
+    const groups = { new: [], accepted: [], ready: [], done: [] };
+    const waiting = [];
+    state.orders.forEach(o => {
+      if (o.status === "pending_payment") waiting.push(o);
+      else if (o.status === "new") groups.new.push(o);
+      else if (o.status === "accepted") groups.accepted.push(o);
+      else if (o.status === "ready") groups.ready.push(o);
+      else groups.done.push(o);
+    });
+    const byPickup = (a, b) => a.pickup_at.localeCompare(b.pickup_at);
+    ["new","accepted","ready"].forEach(k => groups[k].sort(byPickup));
+    Object.entries(groups).forEach(([k, list]) => {
+      const box = $("#c-" + k); box.replaceChildren();
+      $("#n-" + k).textContent = list.length;
+      const tab = document.querySelector('#tabs button[data-col="' + k + '"]'); if (tab) tab.textContent = tab.textContent.replace(/ \(\d+\)$/, "") + (list.length ? " (" + list.length + ")" : "");
+      if (!list.length && !(k === "new" && waiting.length)) box.appendChild(el("div", "empty", k === "new" ? "Geen nieuwe bestellingen" : "Niets hier"));
+      list.forEach(o => box.appendChild(card(o, k === "done")));
+      if (k === "new" && waiting.length) { const h = el("div", "empty", "Wacht op betaling (" + waiting.length + ")"); box.appendChild(h); waiting.forEach(o => box.appendChild(card(o, true))); }
+    });
+    const done = state.orders.filter(o => !["pending_payment","cancelled"].includes(o.status));
+    const revenue = done.reduce((s, o) => s + o.total_cents, 0);
+    const online = done.filter(o => o.pay_method === "online").reduce((s, o) => s + o.total_cents, 0);
+    const st = $("#stats"); st.replaceChildren();
+    [[done.length, "bestellingen"], [euro(revenue), "omzet"], [euro(online), "online betaald"], [euro(revenue - online), "bij afhalen"]].forEach(([v, l]) => { const s = el("div", "stat"); s.appendChild(el("b", null, v)); s.appendChild(el("span", null, l)); st.appendChild(s); });
+  }
+  function printTicket(o){
+    const t = $("#ticket"); t.replaceChildren();
+    t.appendChild(el("div", "c", "I LOVE SMASH BURGER"));
+    t.appendChild(el("h1", null, "#" + o.number));
+    t.appendChild(el("div", "c", (o.asap ? "ZSM – " : "Afhalen ") + o.pickup_at.slice(11)));
+    t.appendChild(el("div", "c", o.name || ""));
+    t.appendChild(el("hr"));
+    o.items.forEach(l => {
+      t.appendChild(el("div", null, l.qty + "x " + l.name + (l.flavor ? " – " + l.flavor : "")));
+      if (l.menu) t.appendChild(el("div", "sub", "COMBO friet + " + l.sauce));
+      else if (l.sauce) t.appendChild(el("div", "sub", "Saus: " + l.sauce));
+      (l.extraSauces || []).forEach(x => t.appendChild(el("div", "sub", "+ " + x)));
+      (l.extras || []).forEach(x => t.appendChild(el("div", "sub", "+ " + x)));
+      (l.without || []).forEach(w => t.appendChild(el("div", "wo", "!! " + w.toUpperCase())));
+      if (l.note) t.appendChild(el("div", "sub", "\"" + l.note + "\""));
+    });
+    if (o.note) { t.appendChild(el("hr")); t.appendChild(el("div", null, "OPMERKING: " + o.note)); }
+    t.appendChild(el("hr"));
+    t.appendChild(el("div", null, "Totaal " + euro(o.total_cents) + " – " + (o.paid ? "BETAALD" : "NOG BETALEN")));
+    window.print();
+  }
+
+  // already logged in?
+  api("/api/admin/orders?day=" + state.day).then(r => { if (r.ok) showApp(); }).catch(() => {});
+})();
+</script>
+</body>
+</html>
