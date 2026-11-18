@@ -631,6 +631,10 @@ label.f{display:block;font-size:12px;font-weight:700;color:var(--muted);margin-b
 .best .price small{color:#8fa4d8}
 .marquee{background:var(--red);border-block-color:#0b1640}
 .marquee-track span::after{color:#fff}
+.best .card-body h3{font-family:"Luckiest Guy","Bowlby One",Impact,sans-serif;font-weight:400;font-size:32px;line-height:1.02;letter-spacing:.02em;color:#fff;-webkit-text-stroke:.12em var(--red);paint-order:stroke fill;text-shadow:.07em .08em 0 #060f33,.1em .13em 0 rgba(0,0,0,.3);transform:rotate(-2.5deg);transform-origin:left center;margin:6px 0 10px;position:relative;align-self:flex-start;padding-bottom:12px;transition:transform .3s cubic-bezier(.2,.9,.3,1.4)}
+.best .card-body h3::after{content:"";position:absolute;left:-4px;bottom:0;width:min(170px,80%);height:10px;background:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 300 30%22 preserveAspectRatio=%22none%22%3E%3Cpath fill=%22%23E3262F%22 d=%22M2 10C60 5 140 3 220 4l70-1-8 6 10 4-9 4 7 6c-80 3-170 4-250 6L2 28l6-5-7-4 8-4z%22/%3E%3Cpath fill=%22%23fff%22 opacity=%22.2%22 d=%22M20 9c80-3 160-4 250-3-90 2-170 3-250 3z%22/%3E%3C/svg%3E") center/100% 100% no-repeat}
+@media (hover:hover){.best .card:hover .card-body h3{transform:rotate(-4deg) scale(1.04)}}
+@media (max-width:600px){.best .card-body h3{font-size:28px}}
 .rv-chip{background:#0164fe;color:#fff;border-color:#0b1640}
 .rv-card{background:#0b1a4a;color:#fff;border-color:#0b1640}
 .rv-card p{color:#cfdaf5}
