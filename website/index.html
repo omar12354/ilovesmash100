@@ -605,6 +605,32 @@ label.f{display:block;font-size:12px;font-weight:700;color:var(--muted);margin-b
   .bollards span{white-space:normal;text-align:center;width:max-content;max-width:calc(100% - 32px);font-size:14px;line-height:1.25}
 }
 @media (max-width:370px){.item .ico{display:grid}.item .ico{width:46px;height:46px}.item .ico img{width:42px;height:42px}}
+
+/* ===== Bestsellers in blue (no more white/cream) ===== */
+.best{background:radial-gradient(90% 60% at 20% 10%,#3f8cff 0%,#1f66ee 45%,#1450d6 100%);color:#fff;position:relative;isolation:isolate}
+.best::before{content:"";position:absolute;inset:0;background:radial-gradient(60% 40% at 85% 90%,rgba(11,22,64,.35),transparent 70%);z-index:-1}
+.best .kicker{color:#fff}
+.best .kicker::before{color:var(--red)}
+.best .sec-head h2{color:#fff;text-shadow:.05em .06em 0 #0b1640}
+.best .sec-head h2 em{color:var(--red);-webkit-text-stroke:.04em #fff;paint-order:stroke fill}
+.best .sec-head p{color:#e6efff}
+.best .card{background:#0b1a4a;border-color:#0b1640;box-shadow:8px 8px 0 #0b1640;color:#fff}
+@media (hover:hover){.best .card:hover{box-shadow:11px 11px 0 #0b1640}}
+.best .card:active{box-shadow:4px 4px 0 #0b1640}
+.best .card-art{border-bottom:3px solid #0b1640}
+.best .card-body h3{color:#fff}
+.best .card-body p{color:#b9c7ea}
+.best .patties{color:#8fa4d8}
+.best .patties i{background:#c47a45}
+.best .price{color:#fff}
+.best .price small{color:#8fa4d8}
+.marquee{background:var(--red);border-block-color:#0b1640}
+.marquee-track span::after{color:#fff}
+.rv-chip{background:#1f66ee;color:#fff;border-color:#0b1640}
+.rv-card{background:#0b1a4a;color:#fff;border-color:#0b1640}
+.rv-card p{color:#cfdaf5}
+.rv-who small{color:#8fa4d8}
+.checker{background:conic-gradient(var(--red) 25%,#2370f3 0 50%,var(--red) 0 75%,#2370f3 0) 0 0/28px 28px}
 </style>
 </head>
 <body>
