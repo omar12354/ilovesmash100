@@ -901,7 +901,7 @@ label.f{display:block;font-size:12px;font-weight:700;color:var(--muted);margin-b
       <h2 class="display" data-i18n="visit_h2">Vers van de<br>plaat in je handen</h2>
       <p class="lead" data-i18n="visit_p">Bestel online, kies je afhaaltijd en haal je bestelling op bij onze stand in World of Flavours aan de Johan Cruijff Boulevard, naast de ArenA.</p>
       <div class="cta-row" style="margin-top:10px">
-        <a class="btn ghost" href="https://maps.google.com/?q=Johan+Cruijff+Boulevard+300+Amsterdam" target="_blank" rel="noopener" data-i18n="route">Route naar afhaalpunt</a>
+        <a class="btn ghost" href="https://maps.app.goo.gl/UY19V67p4UKEt777A" target="_blank" rel="noopener" data-i18n="route">Route naar afhaalpunt</a>
       </div>
     </div>
     <div class="info reveal">
@@ -1011,13 +1011,18 @@ const DELIVERY_ENABLED = false;
 const MADE_BY = { name: "", url: "" };
 // Google reviews. Fill in the real rating and paste real reviews from the Google profile.
 const GOOGLE = {
-  rating: null,          // e.g. 4.8
-  count: null,           // e.g. 126
-  url: "https://www.google.com/maps/search/?api=1&query=I+love+smash+burger+Johan+Cruijff+Boulevard+Amsterdam",
+  rating: 4.8,
+  count: 312,
+  url: "https://maps.app.goo.gl/UY19V67p4UKEt777A",
   writeUrl: ""           // the "write a review" link from the Google Business profile
 };
 const REVIEWS = [
   // { name: "Naam", stars: 5, text: "Tekst van de review", when: "2 weken geleden" },
+  // Real Google reviews (text as shown by Google Maps).
+  { name: "Ayisha Odor", stars: 5, text: "Honestly the best burger I have ever eaten. The people were also so sweet. A truly wonderful experience and I will definitely be coming back!!", when: "Google review" },
+  { name: "Romy Neijndorff", stars: 5, text: "This burger was truly insane. 10/10 recommend coming here for this. The secret sauce is really amazing.", when: "Local Guide · Google" },
+  { name: "Shaquile Prinsloo", stars: 5, text: "Everything good and service good. Food: 5 | Service: 5 | Atmosphere: 5", when: "Google review" },
+  { name: "Kirsten Wolfs", stars: 5, text: "Veryyyy good! Food: 5 | Service: 5 | Atmosphere: 5", when: "Google review" },
 ];
 const OPEN_MIN = 12*60, CLOSE_MIN = 22*60;   // kitchen hours, every day
 const MIN_ORDER = 15, FREE_DELIVERY = 50;
