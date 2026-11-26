@@ -725,9 +725,6 @@ label.f{display:block;font-size:12px;font-weight:700;color:var(--muted);margin-b
 .ph-box img{max-width:100%;max-height:90dvh;border-radius:12px;box-shadow:0 20px 60px rgba(0,0,0,.6);transform:scale(.94);transition:transform .3s}
 .ph-box.show img{transform:none}
 @media (max-width:760px){.stand-grid{grid-template-columns:1fr;gap:30px}.ph{padding:8px 8px 10px}.ph-tag{font-size:16px;right:-4px}.ph2 .ph-tag{left:-4px}}
-.wa-btn{background:#25D366!important;border-color:#25D366!important;box-shadow:0 5px 0 #128C4B!important;color:#fff;margin:10px 0 6px;font-size:14px}
-.wa-note{display:block;color:var(--muted);font-weight:600;margin-bottom:6px}
-#formErr .wa-btn svg{flex:none}
 </style>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "Restaurant", "@id": "https://www.ilovesmash.nl/#restaurant", "name": "I Love Smash Burger", "alternateName": ["I Love Smash", "ilovesmash", "I Love Smash Burger Amsterdam"], "url": "https://www.ilovesmash.nl/", "image": "https://www.ilovesmash.nl/og-image.jpg", "logo": "https://www.ilovesmash.nl/logo/i-love-smash-burger-logo.png", "description": "Smash burgers met een krokant randje bij World of Flavours, naast de Johan Cruijff ArenA in Amsterdam. Bestel online en haal op.", "servesCuisine": ["Burgers", "Smash burgers", "Street food"], "priceRange": "€", "address": {"@type": "PostalAddress", "streetAddress": "Johan Cruijff Boulevard 300", "postalCode": "1101 DS", "addressLocality": "Amsterdam", "addressCountry": "NL"}, "openingHoursSpecification": [{"@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"], "opens": "12:00", "closes": "22:00"}], "hasMenu": "https://www.ilovesmash.nl/#menu", "acceptsReservations": false, "sameAs": ["https://www.instagram.com/i_love_smash_burger/", "https://www.tiktok.com/@ilovesmashburger"], "potentialAction": {"@type": "OrderAction", "target": "https://www.ilovesmash.nl/#menu", "deliveryMethod": "http://purl.org/goodrelations/v1#DeliveryModePickUp"}, "legalName": "I Love Smash", "telephone": "+31643125660", "vatID": "NL004242843B88", "identifier": {"@type": "PropertyValue", "propertyID": "KvK", "value": "86411217"}}</script>
 </head>
@@ -1493,7 +1490,6 @@ async function placeOrder(){
     if(!r.ok){
       if(d.error==="bad_time"||d.error==="paused"||d.error==="closed") await loadServer();
       const fe=$("#formErr"); if(fe) fe.textContent=t(ERR_MSG[d.error]||"err_generic");
-      if(r.status>=500||(!ERR_MSG[d.error]&&!d.error)) showWaFallback();
       const b2=$("#placeBtn"); if(b2){ b2.disabled=!accepting(); b2.textContent=placeLabel(); } return;
     }
     store.set("active_order",{id:d.id,token:d.token,day:amsNow().day});
@@ -1501,33 +1497,8 @@ async function placeOrder(){
     cart=[]; saveCart(); updateCartUI();
     lastOrder={id:d.id,token:d.token,data:null}; view="done"; renderDrawer(); pollOrder();
   }catch(e){
-    showWaFallback(); btn.disabled=false; btn.textContent=placeLabel();
+    const fe=$("#formErr"); if(fe) fe.textContent=t("err_network"); btn.disabled=false; btn.textContent=placeLabel();
   }
-}
-
-/* fallback: send the order via WhatsApp when the backend can't be reached */
-const WA_NUMBER = "31643125660";
-function waOrderText(){
-  const c=customer, nl=lang==="nl", L=[];
-  L.push(nl?"Hoi! Ik wil graag bestellen via ilovesmash.nl:":"Hi! I'd like to order via ilovesmash.nl:"); L.push("");
-  cart.forEach(l=>{const it=byId(l.id); if(!it) return;
-    let s=`${l.qty}× ${it.n}`; if(l.menu) s+=nl?" (menu)":" (combo)";
-    const wo=(l.without||[]).map(w=>((WITHOUT[it.type]||[]).find(y=>y.id===w)||{l:{nl:w,en:w}}).l[lang]||w);
-    if(wo.length) s+=(nl?" – zonder ":" – without ")+wo.join(", ");
-    if(l.note) s+=` (${l.note})`;
-    L.push(s+` – ${eur(unitPrice(l)*l.qty)}`);
-  });
-  L.push(""); L.push((nl?"Totaal: ":"Total: ")+eur(grandTotal()));
-  L.push((nl?"Afhalen: ":"Pickup: ")+(c.time==="asap"?(nl?"zo snel mogelijk":"asap"):c.time));
-  L.push((nl?"Betalen: ":"Payment: ")+(nl?"bij afhalen":"at pickup"));
-  L.push((nl?"Naam: ":"Name: ")+(c.name||"").trim()); L.push((nl?"Telefoon: ":"Phone: ")+(c.phone||"").trim());
-  if((c.note||"").trim()) L.push((nl?"Opmerking: ":"Note: ")+c.note.trim());
-  return L.join("\n");
-}
-function showWaFallback(){
-  const fe=$("#formErr"); if(!fe) return;
-  const nl=lang==="nl";
-  fe.innerHTML=`${t("err_network")}<a class="btn block wa-btn" target="_blank" rel="noopener" href="https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(waOrderText())}"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M12 2a10 10 0 00-8.6 15.1L2 22l5-1.3A10 10 0 1012 2zm5.3 14.2c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .1-3.3-.8-2.8-1.1-4.5-4-4.7-4.2-.1-.2-1.1-1.5-1.1-2.9s.7-2 1-2.3c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 2c.1.2.1.4 0 .5l-.3.5-.4.4c-.1.2-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1 2.1 1.3 2.4 1.5.3.1.5.1.6-.1l.9-1c.2-.3.4-.2.6-.1l1.9.9c.3.1.5.2.5.3.1.2.1.7-.1 1.2z"/></svg>${nl?"Bestel via WhatsApp":"Order via WhatsApp"}</a><small class="wa-note">${nl?"Je bestelling staat al klaar in het bericht. Je betaalt bij het afhalen.":"Your order is pre-filled in the message. You pay at pickup."}</small>`;
 }
 /* order status (real backend) */
 let pollTimer=null;
