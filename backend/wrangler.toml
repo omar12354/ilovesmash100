@@ -7,9 +7,9 @@ rules = [ { type = "Text", globs = ["**/*.html"], fallthrough = true } ]
 
 [vars]
 # Address of the website (GitHub Pages or own domain). Customers return here after paying.
-SITE_URL = "https://omar12354.github.io/ilovesmash/"
-# Which website may call the API. Same origin as SITE_URL, without the path.
-ALLOWED_ORIGIN = "https://omar12354.github.io"
+SITE_URL = "https://www.ilovesmash.nl/"
+# Which websites may call the API (comma-separated, no path, no trailing slash).
+ALLOWED_ORIGIN = "https://www.ilovesmash.nl,https://ilovesmash.nl,https://ilovesmash100.vercel.app,https://omar12354.github.io"
 # "mock" = test mode with a fake payment page. Change to "live" once the SumUp key is set.
 SUMUP_MODE = "mock"
 # Days after which names, phone numbers and e-mail addresses are removed (privacy / AVG).
