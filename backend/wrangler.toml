@@ -11,7 +11,7 @@ SITE_URL = "https://www.ilovesmash.nl/"
 # Which websites may call the API (comma-separated, no path, no trailing slash).
 ALLOWED_ORIGIN = "https://www.ilovesmash.nl,https://ilovesmash.nl,https://ilovesmash100.vercel.app,https://omar12354.github.io"
 # "mock" = test mode with a fake payment page. Change to "live" once the SumUp key is set.
-SUMUP_MODE = "mock"
+SUMUP_MODE = "live"
 # Days after which names, phone numbers and e-mail addresses are removed (privacy / AVG).
 RETENTION_DAYS = "30"
 # Sender for confirmation e-mails (only used when RESEND_API_KEY is set), e.g. "I Love Smash Burger <bestellen@ilovesmashburger.nl>"
