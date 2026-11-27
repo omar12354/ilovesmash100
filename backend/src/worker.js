@@ -64,6 +64,19 @@ async function route(request, env, ctx) {
     if (method === "POST") return mockPayResult(m[1], request, env);
   }
 
+  // home-screen app manifest for the dashboard (icon = I Love Smash logo)
+  if (path === "/manifest.webmanifest" && method === "GET") {
+    return new Response(JSON.stringify({
+      name: "I Love Smash · Bestellingen", short_name: "Bestellingen",
+      start_url: "/dashboard", scope: "/", display: "standalone",
+      background_color: "#0A0E1A", theme_color: "#0A0E1A",
+      icons: [
+        { src: "https://www.ilovesmash.nl/icon-192.png", sizes: "192x192", type: "image/png", purpose: "any" },
+        { src: "https://www.ilovesmash.nl/icon-512.png", sizes: "512x512", type: "image/png", purpose: "any maskable" },
+      ],
+    }), { headers: { "content-type": "application/manifest+json", "cache-control": "public, max-age=3600" } });
+  }
+
   // dashboard
   if ((path === "/" || path === "/dashboard") && method === "GET") {
     return new Response(DASHBOARD_HTML, { headers: {

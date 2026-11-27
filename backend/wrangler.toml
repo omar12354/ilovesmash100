@@ -1,6 +1,8 @@
 name = "ilovesmash-api"
 main = "src/worker.js"
 compatibility_date = "2025-01-15"
+# Keep variables that were added in the Cloudflare dashboard (e.g. SUMUP_MERCHANT_CODE) when deploying.
+keep_vars = true
 
 # The dashboard page is bundled as text
 rules = [ { type = "Text", globs = ["**/*.html"], fallthrough = true } ]

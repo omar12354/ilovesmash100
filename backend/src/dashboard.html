@@ -8,6 +8,9 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Bestellingen">
 <title>Bestellingen · I Love Smash Burger</title>
+<link rel="apple-touch-icon" href="https://www.ilovesmash.nl/apple-touch-icon.png">
+<link rel="icon" type="image/png" href="https://www.ilovesmash.nl/icon-192.png">
+<link rel="manifest" href="/manifest.webmanifest">
 <style>
 :root{--ink:#0A0E1A;--navy:#121A31;--navy2:#1A2545;--navy3:#24315A;--red:#E3262F;--redd:#A3141D;--sky:#8FBCEB;--blue:#2F7BF0;--cheese:#F7B500;--ok:#22c55e;--muted:#A9B4CE;--white:#fff}
 *{box-sizing:border-box;margin:0;padding:0}
@@ -94,6 +97,29 @@ ul.items li:last-child{border-bottom:0}
   .col h2{display:none}
   header .brand{font-size:16px;width:100%}
 }
+/* logo */
+.login-logo{width:170px;height:auto;display:block;margin:0 auto 4px;filter:drop-shadow(0 8px 14px rgba(0,0,0,.45))}
+header .brand{display:flex;align-items:center;gap:10px}
+.head-logo{width:46px;height:auto;flex:none}
+/* tap a card to zoom in */
+.card[data-id]{cursor:zoom-in}
+.focus-bg{position:fixed;inset:0;z-index:30;background:rgba(5,8,16,.84);backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);display:grid;place-items:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .2s}
+.focus-bg.show{opacity:1;pointer-events:auto}
+.focus-box{width:min(680px,100%);max-height:calc(100dvh - 40px);overflow:auto;transform:scale(.88);transition:transform .25s cubic-bezier(.2,.9,.3,1.25);border-radius:22px}
+.focus-bg.show .focus-box{transform:none}
+.focus-box .card{margin:0;padding:24px;cursor:default;border-width:4px}
+.focus-box .num{font-size:60px}
+.focus-box .time{font-size:32px}.focus-box .time small{font-size:15px}
+.focus-box .who{font-size:20px}
+.focus-box .pay{font-size:15px;padding:6px 10px}
+.focus-box ul.items li{font-size:24px;padding:9px 0}
+.focus-box .q{min-width:44px}
+.focus-box .sub,.focus-box .wo{font-size:18px;padding-left:44px}
+.focus-box .note{font-size:19px;padding:10px 12px}
+.focus-box .tot{font-size:20px}
+.focus-box .acts button{padding:20px 12px;font-size:19px}
+.focus-x{position:fixed;top:14px;right:14px;z-index:31;width:52px;height:52px;border-radius:50%;border:0;background:#fff;color:var(--ink);font-size:24px;font-weight:900;box-shadow:0 6px 20px rgba(0,0,0,.4)}
+@media print{.focus-bg{display:none!important}}
 /* receipt printing */
 #ticket{display:none}
 @media print{
@@ -113,7 +139,7 @@ ul.items li:last-child{border-bottom:0}
 <!-- LOGIN -->
 <div class="login" id="loginView">
   <form id="loginForm" autocomplete="off">
-    <div class="brand">I <span>♥</span> Smash Burger</div>
+    <img class="login-logo" src="https://www.ilovesmash.nl/logo/i-love-smash-burger-logo.webp" alt="I Love Smash Burger">
     <p>Bestellingen – log in met de pincode</p>
     <label for="pin" class="hidden">Pincode</label>
     <input class="pin" id="pin" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="12" required autofocus>
@@ -126,7 +152,7 @@ ul.items li:last-child{border-bottom:0}
 <div id="appView" class="hidden">
   <div class="sound-hint hidden" id="soundHint">Tik hier om het geluid voor nieuwe bestellingen aan te zetten</div>
   <header>
-    <div class="brand">I <span>♥</span> Smash · Bestellingen</div>
+    <div class="brand"><img class="head-logo" src="https://www.ilovesmash.nl/logo/i-love-smash-burger-logo.webp" alt="">Bestellingen</div>
     <span class="pill" id="modePill"></span>
     <button class="pill switch" id="pauseBtn" type="button"></button>
     <div class="daybar"><label for="day" class="hidden">Dag</label><input type="date" id="day"></div>
@@ -147,6 +173,7 @@ ul.items li:last-child{border-bottom:0}
     <section class="col done-list" data-col="done"><h2>Afgerond <b id="n-done">0</b></h2><div id="c-done"></div></section>
   </main>
 </div>
+<div class="focus-bg" id="focusBg" role="dialog" aria-modal="true" aria-label="Bestelling"><button class="focus-x" id="focusX" type="button" aria-label="Sluiten">✕</button><div class="focus-box" id="focusBox"></div></div>
 <div id="ticket"></div>
 
 <script>
@@ -272,8 +299,22 @@ ul.items li:last-child{border-bottom:0}
     if (o.status === "ready") btn(o.paid ? "Opgehaald" : "Betaald + opgehaald", "b-blue", () => setStatus(o, "picked_up"));
     if (["new","accepted","ready"].includes(o.status)) btn("Bon", "b-ghost", () => printTicket(o));
     if (acts.children.length) c.appendChild(acts);
+    c.dataset.id = o.id;
+    c.addEventListener("click", e => { if (e.target.closest("button, a") || state.focus === o.id) return; openFocus(o.id); });
     return c;
   }
+  function openFocus(id){ state.focus = id; renderFocus(); }
+  function closeFocus(){ state.focus = null; $("#focusBg").classList.remove("show"); }
+  function renderFocus(){
+    const o = state.focus && state.orders.find(x => x.id === state.focus);
+    if (!o || o.status === "picked_up" || o.status === "cancelled") { closeFocus(); return; }
+    const c = card(o, false); c.removeAttribute("data-id");
+    $("#focusBox").replaceChildren(c);
+    $("#focusBg").classList.add("show");
+  }
+  $("#focusX").addEventListener("click", closeFocus);
+  $("#focusBg").addEventListener("click", e => { if (e.target.id === "focusBg" || e.target.id === "focusBox") closeFocus(); });
+  document.addEventListener("keydown", e => { if (e.key === "Escape" && state.focus) closeFocus(); });
   function cancelBtn(o, btn){
     const b = btn("✕", "b-ghost", () => {
       if (state.armed === o.id) { state.armed = null; setStatus(o, "cancelled"); }
@@ -312,6 +353,7 @@ ul.items li:last-child{border-bottom:0}
     const revenue = done.reduce((s, o) => s + o.total_cents, 0);
     const online = done.filter(o => o.pay_method === "online").reduce((s, o) => s + o.total_cents, 0);
     const st = $("#stats"); st.replaceChildren();
+    renderFocus();
     [[done.length, "bestellingen"], [euro(revenue), "omzet"], [euro(online), "online betaald"], [euro(revenue - online), "bij afhalen"]].forEach(([v, l]) => { const s = el("div", "stat"); s.appendChild(el("b", null, v)); s.appendChild(el("span", null, l)); st.appendChild(s); });
   }
   function printTicket(o){
